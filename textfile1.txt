@@ -1,0 +1,11 @@
+first_name last_name city country
+Chris  Garcia  Phoenix  Canada
+Laura  Johnson  Dallas  Italy
+Michael  Anderson  Phoenix  Germany
+David  Smith  San Jose  Spain
+Chris  Johnson  Houston  Spain
+John  Wilson  Phoenix  France
+Sarah  Davis  Dallas  France
+David  Brown  Dallas  Netherlands
+Michael  Anderson  Chicago  USA
+Michael  Wilson  Dallas  Germany

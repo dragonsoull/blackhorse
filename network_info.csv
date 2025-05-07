@@ -1,0 +1,11 @@
+﻿Vlan,Number_of_Device,DHCP_RESERVE
+网络设备,40,50
+服务器,12,50
+办公网络,100,50
+办公Wifi,100,50
+仓库无线,200,40
+仓库有线,200,40
+CCTV,300,50
+Robot WIFI,100,50
+Robot Server,10,50
+AP,150,50
