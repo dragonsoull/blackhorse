@@ -6,7 +6,8 @@
 #passing .csv file name as 1st argument, hostname as 2nd argument, network as 3rd argument. 
 
 declare hostname=""
-declare network=""
+declare -a network="" 
+declare -i default_reserved=50  #default number of reserved IP addresses
 
 # Check if the correct number of arguments is provided
 if [ "$#" -ne 3 ]; then
@@ -16,7 +17,21 @@ fi
 
 readfile(){
     hostname=$2
-    network=$3
+    # Split the hostname into an array using dot as a delimiter
+    IFS='.' read -r -a network <<< "$3"
+
+    # for ((i=0; i<${#network[@]}; i++));
+    # # for i in "${network[@]}";
+    # do
+    #     # Check if the item is empty
+    #     if [[ -z "$network[i]}" ]]; then
+    #         continue
+    #     fi
+
+    #     # Print the item
+    #     echo "${network[i]}"
+    # done
+    # echo "---------------------"
 
     # Check if the file exists
     if [ ! -f "$1" ]; then
@@ -26,11 +41,6 @@ readfile(){
     # Check if the file is readable
     if [ ! -r "$1" ]; then
         echo "File is not readable!"
-        exit 1
-    fi
-    # Check if the file is a regular file
-    if [ ! -f "$1" ]; then
-        echo "File is not a regular file!"
         exit 1
     fi
     # Check if the file is not empty
@@ -43,37 +53,28 @@ readfile(){
         echo "File is not a CSV file!"
         exit 1
     fi
-    # Check if the file has a header
-    if [ "$(head -n 1 "$1" | grep -c 'hostname')" -eq 0 ]; then
-        echo "File does not have a header!"
-        exit 1
-    fi
-    # Check if the file has a valid header
-    if [ "$(head -n 1 "$1" | grep -c 'hostname,network')" -eq 0 ]; then
-        echo "File does not have a valid header!"
-        exit 1
-    fi
-    # Check if the file has a valid number of columns
-    if [ "$(head -n 1 "$1" | grep -c ',')" -lt 2 ]; then
-        echo "File does not have a valid number of columns!"
-        exit 1
-    fi
-    # Check if the file has a valid number of rows
-    if [ "$(wc -l < "$1")" -lt 2 ]; then
-        echo "File does not have a valid number of rows!"
-        exit 1
-    fi
-    # Check if the file has a valid number of columns
-    if [ "$(head -n 1 "$1" | grep -c ',')" -lt 2 ]; then
-        echo "File does not have a valid number of columns!"
-        exit 1
-    fi
+
+
+    # # Check if the file has a valid number of columns
+    # if [ "$(head -n 1 "$1" | grep -c ',')" -lt 3 ]; then
+    #     echo "File does not have a valid number of columns!"
+    #     exit 1
+    # fi
+    # # Check if the file has a valid number of columns
+    # if [ "$(head -n 1 "$1" | grep -c ',')" -lt 2 ]; then
+    #     echo "File does not have a valid number of columns!"
+    #     exit 1
+    # fi
 
     echo "Hostname: $hostname"
-    echo "Network: $network"
+    echo "Network: ${network[@]}"
     echo "---------------------"
+    echo number of rows: $(wc -l < "$1")
+    echo "---------------------"
+ 
 
     while read -r line; do
+        
         # Skip empty lines
         if [[ -z "$line" ]]; then
             continue
@@ -88,7 +89,6 @@ readfile(){
             if [[ -z "$item" ]]; then
                 continue
             fi
-
             # Print the item
             echo "$item"
         done
@@ -103,6 +103,6 @@ readfile(){
         #     # Write the rest of the line to the config file
         #     echo "$line" >> "$filename"
         # fi
-    done < "$1"
+    done < <(sed '1d' "$1") # remove the first line of the csv file
 }
 readfile "$1" $2 $3
