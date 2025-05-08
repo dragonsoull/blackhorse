@@ -8,6 +8,11 @@
 declare hostname=""
 declare -a network="" 
 declare -i default_reserved=50  #default number of reserved IP addresses
+declare -A net=(
+    ["vlan"]=""
+    ["host"]=""
+    ["subnet"]=""
+)
 
 # Check if the correct number of arguments is provided
 if [ "$#" -ne 3 ]; then
@@ -68,13 +73,13 @@ readfile(){
 
     echo "Hostname: $hostname"
     echo "Network: ${network[@]}"
-    echo "---------------------"
-    echo number of rows: $(wc -l < "$1")
-    echo "---------------------"
+    #echo "---------------------"
+    #echo number of rows: $(wc -l < "$1")
+    #echo "---------------------"
  
-
+    line_number=0
     while read -r line; do
-        
+        ((line_number++))
         # Skip empty lines
         if [[ -z "$line" ]]; then
             continue
@@ -83,16 +88,38 @@ readfile(){
         # Split the line into an array using comma as a delimiter
         IFS=',' read -r -a array <<< "$line"
 
-        for item in ${array[@]};   
-        do
-            # Check if the item is empty
-            if [[ -z "$item" ]]; then
-                continue
-            fi
-            # Print the item
-            echo "$item"
-        done
+        net["vlan"]="${array[0]}"
+        net["host"]="${network[0]}.${network[1]}.${network[2]}.${network[3]}"
+
+        if [[ ${array[1]} -lt 200 ]];
+        then
+            net["subnet"]="255.255.255.0"
+        else
+            net["subnet"]="255.255.254.0"
+        fi
+        echo net["vlan"]: ${net["vlan"]}
+        echo net["host"]: ${net["host"]}
+        echo net["subnet"]: ${net["subnet"]}
         echo "---------------------"
+
+        # echo ${net[@]}
+        # echo "---------------------"
+        # printf "VLAN: %s " "${net["vlan"]}"
+        # printf "Host: %s " "${net["host"]}"
+        # printf "Subnet: %s " "${net["subnet"]}"
+        # printf "Reserved: %s " "${default_reserved}"
+        # echo ""
+        # for ((i=0; i<${#array[@]}; i++))
+        # do
+        #     # Check if the item is empty
+        #     if [[ -z "${array[i]}" ]]; then
+        #         continue
+        #     fi
+        #     # Print the item
+        #     net["vlan"]="${array[0]}"
+        #     echo "array[$i]: ${array[i]}"
+        # done
+        # echo "---------------------"
         # # Check if the first element is "hostname"
         # if [[ "${array[0]}" == "hostname" ]]; then
         #     # Create a new config file with the hostname as the filename
