@@ -79,7 +79,6 @@ readfile(){
  
     line_number=0
     while read -r line; do
-        ((line_number++))
         # Skip empty lines
         if [[ -z "$line" ]]; then
             continue
@@ -89,7 +88,7 @@ readfile(){
         IFS=',' read -r -a array <<< "$line"
 
         net["vlan"]="${array[0]}"
-        net["host"]="${network[0]}.${network[1]}.${network[2]}.${network[3]}"
+        net["host"]="${network[0]}.$((${network[1]}+$line_number)).${network[2]}.${network[3]}"
 
         if [[ ${array[1]} -lt 200 ]];
         then
@@ -101,6 +100,7 @@ readfile(){
         echo net["host"]: ${net["host"]}
         echo net["subnet"]: ${net["subnet"]}
         echo "---------------------"
+        ((line_number++))
 
         # echo ${net[@]}
         # echo "---------------------"
