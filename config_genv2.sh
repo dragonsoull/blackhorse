@@ -7,7 +7,7 @@
 
 declare hostname=""
 declare ip_domain="winit.com.cn"
-declare username="admin"
+declare username=""
 declare secret=""
 declare tacacs=""
 declare vtp_domain=""
